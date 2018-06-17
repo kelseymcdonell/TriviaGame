@@ -1,145 +1,144 @@
-// create game variables
+var panel = $('#quiz-area');
+var countStartNumber = 30;
 
-var correctCount = 0;
-var incorrectCount = 0; 
-var currentQuestion;
-var guess = 0;
-var areYouRight;
-var status =0;
 
-// create question objects
 
-var question1 = {
-    title: "Which of the following is NOT one of Gandalf's many aliases?",
-    answerArray: ["Gandalf the Grey", "Gandalf the White", "Mithrandir", "The White Messenger"], 
+$(document).on('click', '#start-over', function(e) {
+  game.reset();
+});
+
+$(document).on('click', '.answer-button', function(e) {
+  game.clicked(e);
+});
+
+$(document).on('click', '#start', function(e) {
+  $('#clock').html('<span id="counter-number">30</span> ');
+  game.loadQuestion();
+});
+
+
+
+var questions = [{
+    question: "Which of the following is NOT one of Gandalf's many aliases?",
+    answers: ["Gandalf the Grey", "Gandalf the White", "Mithrandir", "The White Messenger"],
     correctAnswer: "The White Messenger",
-    answerGif: ""
-};
-
-var question2 = {
-    title: "What species was Gollum before he was corrupted by the One Ring?",
-    answerArray: ["Dwarf", "Orc", "Hobbit", "Gnome"], 
+    image:""
+}, {
+    question: "What species was Gollum before he was corrupted by the One Ring?",
+    answers: ["Dwarf", "Orc", "Hobbit", "Gnome"],
     correctAnswer: "Hobbit",
-    answerGif: ""
-};
-
-var question3 = {
-    title: "Who becomes unlikely friends over the course of the trilogy?",
-    answerArray: ["Gimli & Legolas", "Pippin & Merry", "Frodo & Bilbo", "Elrond & Isildor"], 
+    image:""
+}, {
+    question: "Who becomes unlikely friends over the course of the trilogy?",
+    answers: ["Gimli & Legolas", "Pippin & Merry", "Frodo & Bilbo", "Elrond & Isildor"], 
     correctAnswer: "Gimli & Legolas",
-    answerGif: ""
-};
-
-var question4 = {
-    title: "Who created the One Ring?",
-    answerArray: ["Sauron", "Saruman", "Isildur", "Sméagol"], 
+    image: ""
+}, {
+    question: "Who created the One Ring?",
+    answers: ["Sauron", "Saruman", "Isildur", "Sméagol"], 
     correctAnswer: "Sauron",
-    answerGif: ""
-};
-
-var question5 = {
-    title: "Which of the following is NOT a gift from Galadriel to The Fellowship of The Ring",
-    answerArray: ["Lock of Hair", "Crystal Phial", "Bread", "Mithril Armor"], 
+    image: ""
+}, {
+    question: "Which of the following is NOT a gift from Galadriel to The Fellowship of The Ring",
+    answers: ["Lock of Hair", "Crystal Phial", "Bread", "Mithril Armor"], 
     correctAnswer: "Mithril Armor",
-    answerGif: ""
-};
+    image: ""
+}];
 
-//create array of questions
 
-var questionArray = [question1, question2, question3, question4, question5];
 
-// create count down function
 
-function countDown(secs, elem) {
-    var element = document.getElementById(elem);
-   if(secs >= 10){
-       element.innerHTML = "00:" + secs
-   } else if(secs <10 && secs > 0) {
-    element.innerHTML = "00:0" + secs
-   }  else {
-        clearTimeout(timer);
-        element.innerHTML = "00:00";
+var game = {
+  questions:questions,
+  currentQuestion:0,
+  counter:countStartNumber,
+  correct:0,
+  incorrect:0,
+  countdown: function(){
+    game.counter--;
+    $('#counter-number').html(game.counter);
+
+    if (game.counter === 0){
+      console.log('TIME UP');
+      game.timeUp();
     }
-    ;
-    secs --;
-    window.timer = setTimeout('countDown ('+secs+',"'+elem+'")', 1000);
-    
-};
+  },
+  loadQuestion: function(){
+    timer = setInterval(game.countdown, 1000);
+    panel.html('<h2>' + questions[this.currentQuestion].question + '</h2>' );
+    for (var i = 0; i<questions[this.currentQuestion].answers.length; i++){
+      panel.append('<button class="answer-button" id="button"' + 'data-name="' + questions[this.currentQuestion].answers[i] + '">' + questions[this.currentQuestion].answers[i]+ '</button>');
+    }
+  },
+  nextQuestion: function(){
+    game.counter = countStartNumber;
+    $('#counter-number').html(game.counter);
+    game.currentQuestion++;
+    game.loadQuestion();
+  },
+  timeUp: function (){
+    clearInterval(timer);
+    $('#counter-number').html(game.counter);
 
-function timeLeft(){
-    var timeleft = 5000;
-    var downloadTimer = setInterval(function(){
-    timeleft--;
-    document.getElementById("game").innerHTML="help";
-    if(timeleft <= 0)
-        clearInterval(downloadTimer);
-    },5000);
-}
+    panel.html('<h2>Out of Time!</h2>');
+    panel.append('<h3>The Correct Answer was: ' + questions[this.currentQuestion].correctAnswer);
+    panel.append('<img src="' + questions[this.currentQuestion].image + '" />');
 
-
-function stopClock(){
-    clearTimeout(timer)
-    $("#clock").text("00:00");   
-};
-
-
-function checkAnswer(currentQuestion){
-
-    if(guess == currentQuestion.correctAnswer){
-       areYouRight = true;
-        $("#answer").text("Correct!");
-        stopClock();
-        correctCount = correctCount++;
-        timeLeft();
-        status = status++;
-
+    if (game.currentQuestion === questions.length - 1){
+      setTimeout(game.results, 3 * 1000);
     } else {
-        areYouRight = false;
-        $("#answer").text("Nope!");
-        stopClock();
-        incorrectCount = incorrectCount++;
-        timeLeft();
-        status = status++;
-    };
+      setTimeout(game.nextQuestion, 3 * 1000);
+    }
+  },
+  results: function() {
+    clearInterval(timer);
 
-}
+    panel.html("<h2>All done, here's how you did!</h2>");
+    $('#counter-number').html(game.counter);
+    panel.append('<h3>Correct Answers: ' + game.correct + '</h3>');
+    panel.append('<h3>Incorrect Answers: ' + game.incorrect + '</h3>');
+    panel.append('<h3>Unanswered: ' + (questions.length - (game.incorrect + game.correct)) + '</h3>');
+    panel.append('<br><button id="start-over">Start Over?</button>');
+  },
+  clicked: function(e) {
+    clearInterval(timer);
 
+    if ($(e.target).data("name") === questions[this.currentQuestion].correctAnswer){
+      this.answeredCorrectly();
+    } else {
+      this.answeredIncorrectly();
+    }
+  },
+  answeredIncorrectly: function() {
+    game.incorrect++;
+    clearInterval(timer);
+    panel.html('<h2>Nope!</h2>');
+    panel.append('<h3>The Correct Answer was: ' + questions[game.currentQuestion].correctAnswer + '</h3>');
+    panel.append('<img src="' + questions[game.currentQuestion].image + '" />');
 
-function askQuestion(currentQuestion) {
+    if (game.currentQuestion === questions.length - 1){
+      setTimeout(game.results, 3 * 1000);
+    } else {
+      setTimeout(game.nextQuestion, 3 * 1000);
+    }
+  },
+  answeredCorrectly: function(){
+    clearInterval(timer);
+    game.correct++;
+    panel.html('<h2>Correct!</h2>');
+    panel.append('<img src="' + questions[game.currentQuestion].image + '" />');
 
-countDown(30, "clock");
-
-$("#question").text(currentQuestion.title);
-
-$("#answerArray").append("<button type='button' class='btn' id='answerBtn0'>"+ currentQuestion.answerArray[0]+"</button><br><br>");
-$("#answerArray").append("<button type='button' class='btn' id='answerBtn1'>"+ currentQuestion.answerArray[1]+"</button><br><br>");
-$("#answerArray").append("<button type='button' class='btn' id='answerBtn2'>"+ currentQuestion.answerArray[2]+"</button><br><br>");
-$("#answerArray").append("<button type='button' class='btn' id='answerBtn3'>"+ currentQuestion.answerArray[3]+"</button><br><br>");
-
-$("#answerBtn0").click(function(){guess = currentQuestion.answerArray[0];console.log(guess); checkAnswer(currentQuestion)});
-$("#answerBtn1").click(function(){guess = currentQuestion.answerArray[1];console.log(guess); checkAnswer(currentQuestion)});
-$("#answerBtn2").click(function(){guess = currentQuestion.answerArray[2];console.log(guess); checkAnswer(currentQuestion)});
-$("#answerBtn3").click(function(){guess = currentQuestion.answerArray[3];console.log(guess); checkAnswer(currentQuestion)});
-
-
-
+    if (game.currentQuestion === questions.length - 1){
+      setTimeout(game.results, 3 * 1000);
+    } else {
+      setTimeout(game.nextQuestion, 3 * 1000);
+    }
+  },
+  reset: function(){
+    this.currentQuestion = 0;
+    this.counter = countStartNumber;
+    this.correct = 0;
+    this.incorrect = 0;
+    this.loadQuestion();
+  }
 };
-
-
-
-
-$(document).ready(function(){
-    $("#startBtn").click(function(){
-        $("#startBtn").remove(); 
-      
-        askQuestion(question1);
- 
-    });
-     });
-
- 
-if(status === 1) {
-
-askQuestion(question2) 
-}
-   

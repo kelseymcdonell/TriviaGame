@@ -1,0 +1,74 @@
+body {
+    background-image: url(../images/lotr\ bg.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover
+
+}
+
+#wrapper {
+    text-align: center;
+    font-family: 'Spectral', serif;
+}
+
+#subwrapper{
+    opacity: .7;
+    background-color: lightgray;
+    text-align: center;
+    margin-left: 150px;
+    margin-right: 150px;
+    margin-bottom: 50px;
+    padding: 10px
+}
+button{
+    display:block;
+    width:40%;
+    height:20%;
+    margin: 0 auto;
+    border:none;
+    cursor: pointer;
+    background: transparent;
+    opacity: 1;
+    font-size: 30px;;
+    font-family: 'Spectral', serif;
+  }
+
+  button:hover {
+   background-color: #86AC41;
+   opacity: 1;
+  }
+
+  #start{
+    width: fit-content;
+    border:2px solid ;
+    background-color: #7DA3A1;
+    font-family: 'Spectral', serif;
+    font-size: 20px;
+    opacity: 1;
+  }
+
+  h1{
+    color: #323232;
+    font-weight:bold;
+    font-size: 70px;
+    font-family: 'Spectral', serif;
+    opacity: 1;
+    font-style: italic;
+    
+  }
+
+  p, h3 {
+    font-family: 'Spectral', serif;
+    color:#323232;
+    opacity: 1;
+  }
+
+  h2{
+      color: #34675C;
+      font-family: 'Spectral', serif;     
+  }
+
+#clock{
+    color: #323232;
+    font-family: 'Spectral', serif;  
+    font-size: 30px;   
+}
